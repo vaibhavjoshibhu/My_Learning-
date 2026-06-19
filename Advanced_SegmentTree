@@ -1,0 +1,300 @@
+# 📊 Segment Tree + Fenwick Tree (BIT) Master Sheet — Advanced DS
+
+These are **advanced range query data structures** used when:
+
+* arrays are dynamic (updates happen)
+* and we need fast range queries
+
+---
+
+# 0. When to Use These?
+
+```text id="st0"
+Ask:
+
+✔ Need range sum / min / max queries?
+✔ Need updates + queries both?
+✔ Prefix sum is not enough (because updates happen)?
+✔ Need O(log n) instead of O(n)?
+```
+
+If YES → Segment Tree or BIT.
+
+---
+
+# 1. Segment Tree vs BIT (Fenwick)
+
+| Feature     | Segment Tree      | BIT            |
+| ----------- | ----------------- | -------------- |
+| Ease        | Medium-Hard       | Easy-Medium    |
+| Operations  | Any (min/max/sum) | Mostly sum/XOR |
+| Flexibility | Very high         | Limited        |
+| Memory      | O(4n)             | O(n)           |
+| Speed       | O(log n)          | O(log n)       |
+
+---
+
+# 2. Core Idea ⭐
+
+```text id="st1"
+Break array into segments
+→ store answers for each segment
+→ combine results when needed
+```
+
+---
+
+# 🧱 PART 1: SEGMENT TREE
+
+---
+
+# 3. Structure
+
+```cpp id="st2"
+int seg[4 * N];
+```
+
+---
+
+# 4. Build Tree ⭐
+
+```cpp id="st3"
+void build(int idx, int l, int r, vector<int>& arr){
+
+    if(l == r){
+        seg[idx] = arr[l];
+        return;
+    }
+
+    int mid = (l + r) / 2;
+
+    build(2*idx, l, mid, arr);
+    build(2*idx+1, mid+1, r, arr);
+
+    seg[idx] = seg[2*idx] + seg[2*idx+1];
+}
+```
+
+---
+
+# 5. Range Query ⭐
+
+```cpp id="st4"
+int query(int idx, int l, int r, int ql, int qr){
+
+    if(qr < l || r < ql)
+        return 0;
+
+    if(ql <= l && r <= qr)
+        return seg[idx];
+
+    int mid = (l + r) / 2;
+
+    return query(2*idx, l, mid, ql, qr)
+         + query(2*idx+1, mid+1, r, ql, qr);
+}
+```
+
+---
+
+# 6. Point Update ⭐
+
+```cpp id="st5"
+void update(int idx, int l, int r, int pos, int val){
+
+    if(l == r){
+        seg[idx] = val;
+        return;
+    }
+
+    int mid = (l + r) / 2;
+
+    if(pos <= mid)
+        update(2*idx, l, mid, pos, val);
+    else
+        update(2*idx+1, mid+1, r, pos, val);
+
+    seg[idx] = seg[2*idx] + seg[2*idx+1];
+}
+```
+
+---
+
+# 7. Complexity
+
+```text id="st6"
+Build   → O(n)
+Query   → O(log n)
+Update  → O(log n)
+Space   → O(4n)
+```
+
+---
+
+# 8. Segment Tree Patterns ⭐⭐⭐⭐⭐
+
+---
+
+## Pattern A: Range Sum Query
+
+```text id="st7"
+Sum of elements in range
+```
+
+---
+
+## Pattern B: Range Min / Max
+
+```text id="st8"
+Replace + with min/max
+```
+
+---
+
+## Pattern C: Range Update (Lazy Propagation)
+
+```text id="st9"
+Update range efficiently
+```
+
+---
+
+---
+
+# 🌿 PART 2: FENWICK TREE (BIT)
+
+---
+
+# 9. Core Idea ⭐
+
+```text id="st10"
+Store prefix sums in a compressed tree structure
+using bit operations
+```
+
+---
+
+# 10. BIT Structure
+
+```cpp id="st11"
+int bit[N];
+```
+
+---
+
+# 11. Update Operation ⭐
+
+```cpp id="st12"
+void update(int i, int val){
+
+    while(i < N){
+        bit[i] += val;
+        i += (i & -i);
+    }
+}
+```
+
+---
+
+# 12. Prefix Query ⭐
+
+```cpp id="st13"
+int sum(int i){
+
+    int res = 0;
+
+    while(i > 0){
+        res += bit[i];
+        i -= (i & -i);
+    }
+
+    return res;
+}
+```
+
+---
+
+# 13. Range Query
+
+```text id="st14"
+sum(l, r) = sum(r) - sum(l-1)
+```
+
+---
+
+# 14. Complexity
+
+```text id="st15"
+Update  → O(log n)
+Query   → O(log n)
+Space   → O(n)
+```
+
+---
+
+# 15. BIT vs Segment Tree Usage Rule ⭐
+
+```text id="st16"
+Need simplicity + prefix sum?
+→ BIT
+
+Need flexibility (min/max/range updates)?
+→ Segment Tree
+```
+
+---
+
+# 16. BIT Trick Insight ⭐⭐⭐
+
+```text id="st17"
+i & -i → lowest set bit
+controls range size in BIT
+```
+
+---
+
+# 17. Problem → Pattern Mapping
+
+| Problem                 | Structure          |
+| ----------------------- | ------------------ |
+| Range Sum Query         | BIT / Segment Tree |
+| Point Update + Query    | Both               |
+| Range Min/Max           | Segment Tree       |
+| Frequency count queries | BIT                |
+| Inversion Count         | BIT                |
+| Order statistics        | Segment Tree       |
+
+---
+
+# 18. Decision Tree ⭐⭐⭐
+
+```text id="st18"
+Need updates + queries?
+        ↓
+Yes
+        ↓
+Need min/max/range update?
+        → Segment Tree
+
+Only sum/frequency?
+        → BIT
+```
+
+---
+
+# 19. FINAL INSIGHT ⭐⭐⭐⭐⭐
+
+```text id="st19"
+Segment Tree = full power range engine
+BIT = lightweight prefix query engine
+```
+
+---
+
+# 20. ONE-LINE SUMMARY
+
+```text id="st20"
+Segment Tree + BIT = tools for fast dynamic range queries
+```
+
+---

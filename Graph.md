@@ -522,11 +522,3 @@ They are about recognizing 6 patterns:
 ```
 
 ---
-
-If you want next, I can create:
-
-* 🔥 DP Master Sheet (most important after graphs)
-* 🔥 Greedy Master Sheet
-* 🔥 Heap / Priority Queue Sheet
-
-These 4 sheets together = full interview prep system.
